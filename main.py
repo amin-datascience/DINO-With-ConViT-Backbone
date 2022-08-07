@@ -184,8 +184,8 @@ def main(parameters):
     n_parameters = sum(param.numel() for param in student.parameters() if param.requires._grad)
     print('The number of trainable parameters is : {}'.format(n_parameters))
 
-    head_student = DinoHead(in_dim = 384, hidden_dim = 384, out_dim = parameters['out_dim'], n_layers = 3, norm_last_layer = True)
-    head_teacher = DinoHead(in_dim = 384, hidden_dim = 384, out_dim = parameters['out_dim'], n_layers = 3, norm_last_layer = True)
+    head_student = DinoHead(in_dim = 768, hidden_dim = 768, out_dim = parameters['out_dim'], n_layers = 3, norm_last_layer = True)
+    head_teacher = DinoHead(in_dim = 768, hidden_dim = 768, out_dim = parameters['out_dim'], n_layers = 3, norm_last_layer = True)
     student = MultiCropWrapper(student, head_student)
     teacher = MultiCropWrapper(teacher, head_teacher)
     student, teacher = student.to(device), teacher.to(device)
@@ -216,9 +216,9 @@ def main(parameters):
 
 if __name__ == '__main__':
 
-    parameters = {'batch_size': 512, 'lr': 7.5e-6, 'weight_decay': 0.05, 'img_size': 32, 'n_crops': 4, 
-                'layers' : 12, 'n_heads' : 8, 'patch_size' : 16, 'n_classes' : 384, 
-                'embed_dim' : 384, 'out_dim': 1024, 'teacher_temp' : 0.04, 'student_temp' : 0.1, 
+    parameters = {'batch_size': 512, 'lr': 0.0005, 'weight_decay': 0.05, 'img_size': 32, 'n_crops': 4, 
+                'layers' : 12, 'n_heads' : 8, 'patch_size' : 16, 'n_classes' : 0, 
+                'embed_dim' : 768, 'out_dim': 1024, 'teacher_temp' : 0.04, 'student_temp' : 0.1, 
                 'center_momentum' : 0.996, 'max_epochs' : 100, 'momentum_teacher': 0.9, 'clip_grad': 2.0, 
                 'mlp_ratio': 4., 'qkv_bias': False, 'drop': 0., 'attn_drop': 0., 'local_layers':10., 
                 'locality_strength': 1., 'depth': 12, 'use_pos_embed': True}
