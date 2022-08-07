@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn 
 from torch.nn import functional as F
 
-#Main s
+#Main s1
 
 class PatchEmbedding(nn.Module):
 
