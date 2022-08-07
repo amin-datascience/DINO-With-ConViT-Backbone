@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn 
 from torch.nn import functional as F
 
-
+#Main s
 
 class PatchEmbedding(nn.Module):
 
@@ -30,7 +30,7 @@ class PatchEmbedding(nn.Module):
 
         elif isinstance(m, nn.LayerNorm):
             nn.init.constant_(m.bias, 0)
-            nn.init.constant_(m.weight, 1.0)
+            nn.init.constant_(m.Weight, 1.0)
 
 
     def forward(self, x):
@@ -64,7 +64,7 @@ class MLP(nn.Module):
 
         elif isinstance(m, nn.LayerNorm):
             nn.init.constant_(m.bias, 0)
-            nn.init.constant_(m.weight, 1.0)
+            nn.init.constant_(m.Weight, 1.0)
 
 
     def forward(self, x):
@@ -100,7 +100,7 @@ class GPSA(nn.Module):
         self.apply(self._init_weights)
 
         if use_local_init:
-            self.local_init(locality_strength = locality_strength)
+            self.local_init(locality_strentgth = locality_strength)
 
 
 
@@ -113,7 +113,7 @@ class GPSA(nn.Module):
 
         elif isinstance(m, nn.LayerNorm):
             nn.init.constant_(m.bias, 0)
-            nn.init.constant_(m.weight, 1.0)
+            nn.init.constant_(m.Weight, 1.0)
 
 
     
@@ -223,7 +223,7 @@ class SelfAttention(nn.Module):
 
         elif isinstance(m, nn.LayerNorm):
             nn.init.constant_(m.bias, 0)
-            nn.init.constant_(m.weight, 1.0)
+            nn.init.constant_(m.Weight, 1.0)
 
 
     def forward(self, x):
@@ -320,7 +320,7 @@ class Convit(nn.Module):
         self.norm = nn.LayerNorm(embed_dim)     
         self.head = nn.Linear(embed_dim, n_classes) if n_classes > 0 else nn.Identity()
 
-        nn.init.trunc_normal_(self.cls_token, std = 0.02)
+        nn.init.trunc_normal_(self.cls, std = 0.02)
         self.head.apply(self._init_weights)
 
 
@@ -333,11 +333,11 @@ class Convit(nn.Module):
 
         elif isinstance(m, nn.LayerNorm):
             nn.init.constant_(m.bias, 0)
-            nn.init.constant_(m.weight, 1.0)
+            nn.init.constant_(m.Weight, 1.0)
 
 
     def forward(self, x):
-        n_samples = x.shape[0]
+        n_samples, n_patches, embed_dim = x.shape
 
         x = self.patch_embed(x)
         cls_token = self.cls_token.expand(n_samples, -1, -1)
@@ -353,8 +353,6 @@ class Convit(nn.Module):
             x = block(x)
 
         cls_embed  = self.norm(x)
-        cls_embed = cls_embed[:, 0]
-        
         x_cls = self.head(cls_embed)
 
         return x_cls
@@ -393,7 +391,7 @@ class DinoHead(nn.Module):
                 The last layer of the MLP.
     """
 
-    def __init__(self, in_dim = 384, hidden_dim = 384, out_dim = 10, n_layers = 3, bottleneck_dim = 256, norm_last_layer = False):
+    def __init__(self, in_dim = 384, hidden_dim = 384, out_dim = 10, n_layers = 3, norm_last_layer = False):
         super(DinoHead, self).__init__()
         self.in_dim = in_dim
         self.hidden_dim = hidden_dim
@@ -409,12 +407,12 @@ class DinoHead(nn.Module):
             for _ in range(n_layers-2):
                 layers.append(nn.Linear(hidden_dim, hidden_dim))
                 layers.append(nn.GELU())
-            layers.append(nn.Linear(hidden_dim, bottleneck_dim))
+            layers.append(nn.Linear(hidden_dim, hidden_dim))
 
             self.mlp = nn.Sequential(*layers)
 
         self.apply(self._init_weights)
-        self.last_linear_layer = nn.utils.weight_norm(nn.Linear(bottleneck_dim, out_dim, bias = False))
+        self.last_linear_layer = nn.utils.weight_norm(nn.Linear(hidden_dim, out_dim, bias = False))
         self.last_linear_layer.weight_g.data.fill_(1)
         
         if norm_last_layer:
@@ -528,6 +526,10 @@ class DinoLoss(nn.Module):
         """
         batch_center = torch.cat(teacher_output).mean(dim = 0, keepdim = True) #(1, out_dim)
         self.center = self.center * self.center_momentum + batch_center * (1-self.center_momentum)
+
+
+
+
 
 
 
