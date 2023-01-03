@@ -66,7 +66,7 @@ def train_func(train_loader, student, teacher, optimizer, loss_func, momentum_te
                 images = [img.to(device) for img in images]
                 labels = labels.to(device)
 
-            #Training
+            #================= Training ======================
             student.train()
             student.training = True
             cls_student = student(images)
@@ -181,7 +181,7 @@ def main(parameters):
         drop = parameters['drop'], attn_drop = parameters['attn_drop'], local_layers = parameters['local_layers'], 
         locality_strength = parameters['locality_strength'], depth = parameters['depth'], use_pos_embed = parameters['use_pos_embed'])
     
-    n_parameters = sum(param.numel() for param in student.parameters() if param.requires._grad)
+    n_parameters = sum(param.numel() for param in student.parameters() if param.requires_grad)
     print('The number of trainable parameters is : {}'.format(n_parameters))
 
     head_student = DinoHead(in_dim = 768, hidden_dim = 768, out_dim = parameters['out_dim'], n_layers = 3, norm_last_layer = True)
