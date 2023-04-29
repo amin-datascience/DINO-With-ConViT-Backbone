@@ -5,7 +5,6 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import accuracy_score  
 from sklearn.linear_model import LogisticRegression
 
-
 #evaludation Module
 
 def evaluate(model, dataloader_train, dataloader_validation):
