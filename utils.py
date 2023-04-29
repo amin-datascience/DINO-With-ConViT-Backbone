@@ -7,7 +7,6 @@ import matplotlib.pyplot as plt
 from torch.utils import data 
 
 
-
 def clip_gradient(model, clip = 2.0):
     """Rescales norm of computed gradients.
 
